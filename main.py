@@ -4,15 +4,23 @@ import sys
 
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
+
+from functions.get_files_info import schema_get_files_info
 
 load_dotenv()
+
+available_functions = types.Tool(
+    function_declarations=[
+        schema_get_files_info,
+    ]
+)
 
 
 def main():
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
     client = genai.Client(api_key=gemini_api_key)
 
-    print("Hello from bootdev-py-ai-agent!")
     command_args = sys.argv[1:]
     command_flags = list(filter(lambda x: x.startswith("--"), command_args))
     command_prompt_list = list(filter(lambda x: not x.startswith("--"), command_args))
@@ -25,15 +33,42 @@ def main():
             'Please include prompt in your command enclosed in parenthesis: uv run main.py "your prompt here"'
         )
 
+    system_prompt = """
+        You are a helpful AI coding agent.
+
+        When a user asks a question or makes a request, make a function call plan. You can perform the following operations:
+
+        - List files and directories
+        - Read file contents
+        - Execute Python files with optional arguments
+        - Write or overwrite files
+
+        All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reasons.
+    """
+
+    model_name = "gemini-2.0-flash-001"
+    messages = [command_prompt]
+
     response = client.models.generate_content(
-        model="gemini-2.0-flash-001",
-        contents=command_prompt,
+        model=model_name,
+        contents=messages,
+        config=types.GenerateContentConfig(
+            tools=[available_functions], system_instruction=system_prompt
+        ),
     )
 
     response_text = response.text
     response_usage = response.usage_metadata
+    function_calls = (
+        response.function_calls if response.function_calls is not None else []
+    )
 
-    print(response_text)
+    # Print outputs
+    if response_text is not None:
+        print(response_text)
+
+    for function_call in function_calls:
+        print(f"Calling function: {function_call.name}({function_call.args})")
 
     if is_verbose:
         print(f"User prompt: {command_prompt}")
