@@ -1,3 +1,4 @@
+# cspell: ignore genai
 import os
 
 from google.genai import types
