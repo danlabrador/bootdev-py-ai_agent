@@ -1,7 +1,10 @@
+# cspell: ignore genai
 import os
 
+from google.genai import types
 
-def get_files_content(working_directory, raw_file_path):
+
+def get_file_content(working_directory, raw_file_path):
     try:
         current_working_directory_path = os.getcwd()
         working_directory_path = working_directory
@@ -32,3 +35,19 @@ def get_files_content(working_directory, raw_file_path):
         return file_content_string
     except Exception as e:
         return f"Error: {e}"
+
+
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
+    description="Returns the content of the given file inside the working directory. Content is truncated to 10,000 characters if larger.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "raw_file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Relative path of the file to read from the working directory.",
+            ),
+        },
+        required=["raw_file_path"],
+    ),
+)

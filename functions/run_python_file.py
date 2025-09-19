@@ -1,5 +1,8 @@
+# cspell: ignore genai
 import os
 import subprocess
+
+from google.genai import types
 
 
 def run_python_file(working_directory, raw_file_path, args=[]):
@@ -52,3 +55,24 @@ def run_python_file(working_directory, raw_file_path, args=[]):
 
     except Exception as e:
         return f"Error: executing Python file: {e}"
+
+
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Executes a Python file located in the working directory with optional arguments, returning its output or error messages.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "raw_file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Relative path of the Python file to execute from the working directory. Must end with .py",
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                items=types.Schema(type=types.Type.STRING),
+                description="Optional list of additional arguments to pass to the Python file when running.",
+            ),
+        },
+        required=["raw_file_path"],
+    ),
+)

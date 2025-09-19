@@ -1,4 +1,7 @@
+# cspell: ignore genai
 import os
+
+from google.genai import types
 
 
 def write_file(working_directory, raw_file_path, content):
@@ -32,3 +35,23 @@ def write_file(working_directory, raw_file_path, content):
 
     except Exception as e:
         return f"Error: {e}"
+
+
+schema_write_file = types.FunctionDeclaration(
+    name="write_file",
+    description="Writes content to a file inside the working directory. Creates intermediate directories if they do not exist. Overwrites the file if it already exists.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "raw_file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Relative path of the file to write inside the working directory.",
+            ),
+            "content": types.Schema(
+                type=types.Type.STRING,
+                description="The text content to write into the file. Existing content will be overwritten.",
+            ),
+        },
+        required=["raw_file_path", "content"],
+    ),
+)
