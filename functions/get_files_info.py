@@ -53,8 +53,3 @@ schema_get_files_info = types.FunctionDeclaration(
         },
     ),
 )
-
-
-if __name__ == "__main__":
-    results = get_files_info(os.getcwd(), "sample")
-    print(results)
