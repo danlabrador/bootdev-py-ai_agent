@@ -8,11 +8,15 @@ from functions.run_python_file import run_python_file
 from functions.write_file import write_file
 
 
-def call_function(function_call_part: types.FunctionCall, verbose=False):
+def call_function(
+    function_call_part: types.FunctionCall, verbose=False
+) -> types.Content:
     if verbose:
-        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+        print(
+            f"\n-> Calling function: {function_call_part.name}({function_call_part.args})"
+        )
     else:
-        print(f"Calling function: {function_call_part.name}")
+        print(f"\n-> Calling function: {function_call_part.name}")
 
     function_name = function_call_part.name
     function_args = function_call_part.args
