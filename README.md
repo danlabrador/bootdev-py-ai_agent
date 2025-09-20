@@ -61,7 +61,7 @@ uv run main.py "list all files in the calculator directory"
 uv run main.py "run the calculator tests"
 
 # Evaluate a mathematical expression
-uv run main.py "calculate 3 * 4 + 5"
+uv run main.py "use the calculator module we have to calculate 3 * 4 + 5
 ```
 
 ## Project Structure
