@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from functions.call_function import call_function
 from functions.get_file_content import schema_get_file_content
 from functions.get_files_info import schema_get_files_info
 from functions.run_python_file import schema_run_python_file
@@ -74,7 +75,18 @@ def main():
         print(response_text)
 
     for function_call in function_calls:
-        print(f"Calling function: {function_call.name}({function_call.args})")
+        results = call_function(function_call, verbose=is_verbose)
+
+        if results.parts is None:
+            raise TypeError("result.parts is not a list")
+
+        if results.parts[0].function_response is None:
+            raise KeyError(
+                'results.parts[0].function_response has no attribute "response"'
+            )
+
+        if is_verbose:
+            print(f"-> {results.parts[0].function_response.response}")
 
     if is_verbose:
         print(f"User prompt: {command_prompt}")
