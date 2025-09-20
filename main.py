@@ -192,7 +192,7 @@ def main():
             )
 
     if is_verbose:
-        print(f"User prompt: {command_prompt}")
+        print(f"\nUser prompt: {command_prompt}")
         print(f"Prompt tokens: {response_usage.prompt_token_count}")  # type: ignore
         print(f"Response tokens: {response_usage.candidates_token_count}")  # type: ignore
 
